@@ -36,6 +36,8 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
         return new DataSourceTransactionManager(dataSource);
     }
 
+    //트랜잭션 빈 추가 부분
+    //명시적 트랜잭션 관리 @Transactional과의 차이점 알아두기.
     @Bean
     public TransactionTemplate writeTransactionOperations(PlatformTransactionManager transactionManager){
         var transactionTemplate = new TransactionTemplate(transactionManager);
@@ -46,7 +48,7 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
     @Bean
     public TransactionTemplate readTransactionOperations(PlatformTransactionManager transactionManager){
         var transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.setReadOnly(true);
+        transactionTemplate.setReadOnly(true); //수정 삭제 생성 x 조회만 가능
         return transactionTemplate;
     }
 

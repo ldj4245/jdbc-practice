@@ -36,6 +36,8 @@ public class DummyJdbcTemplateRepository implements DummyRepository {
 
     @Override
     public Dummy save(Dummy dummy) {
+
+        //save 경우 write 이므로 writeTransaction 사용
         return writeTransactionOperations.execute(status ->{
 
             String sql = "INSERT INTO DUMMY VALUES (?,?)";
@@ -46,6 +48,21 @@ public class DummyJdbcTemplateRepository implements DummyRepository {
 
         });
 
+    }
+
+    @Override
+    public Optional<Dummy> findByName(String name){
+        return readTransactionOperations.execute(status -> {
+            String sql = "SELECT * FROM DUMMY WHERE name = ?";
+            List<Dummy>dummies = jdbcTemplate.query(sql,(ResultSet rs, int rowNum) ->{
+                Dummy dummy = new Dummy();
+                dummy.setId(rs.getInt("id"));
+                dummy.setName(rs.getString("name"));
+                return dummy;
+            }, name);
+
+            return Optional.ofNullable(dummies.get(0));
+        });
     }
 
 //    @Override
@@ -68,15 +85,15 @@ public class DummyJdbcTemplateRepository implements DummyRepository {
 //        return Optional.ofNullable(dummies.get(0));
 //    }
 
-    @Override
-    public Optional<Dummy> findByName(String name){
-        String sql = "SELECT * FROM DUMMY WHERE name = ?";
-        List<Dummy> dummies = jdbcTemplate.query(sql,new DummyCustomRowMapper(),name);
-
-        return Optional.ofNullable(dummies.get(0));
-
-    }
-
+//    @Override
+//    public Optional<Dummy> findByName(String name){
+//        String sql = "SELECT * FROM DUMMY WHERE name = ?";
+//        List<Dummy> dummies = jdbcTemplate.query(sql,new DummyCustomRowMapper(),name);
+//
+//        return Optional.ofNullable(dummies.get(0));
+//
+//    }
+//
 
 
 
